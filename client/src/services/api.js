@@ -1,20 +1,19 @@
 import axios from 'axios';
 
-// Get base backend URL with fallback to live Render backend
+// Always target live Render backend when deployed or when VITE_API_URL is set
 const getApiBaseUrl = () => {
-  let rawUrl = import.meta.env.VITE_API_URL;
-
-  // In browser production mode on Vercel, fallback to live Render backend if unset
-  if (!rawUrl || rawUrl === '/' || rawUrl === '/api') {
-    if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
-      rawUrl = 'https://mern-task-lds4.onrender.com';
-    } else {
-      return '/api';
-    }
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && envUrl.trim() !== '' && envUrl !== '/api') {
+    const clean = envUrl.trim().replace(/\/+$/, '');
+    return clean.endsWith('/api') ? clean : `${clean}/api`;
+  }
+  
+  // Default to live Render backend for Vercel/Production deployment
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'https://mern-task-lds4.onrender.com/api';
   }
 
-  const cleanUrl = rawUrl.replace(/\/+$/, '');
-  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+  return '/api';
 };
 
 const api = axios.create({

@@ -25,6 +25,15 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Welcome root route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'CaseFlow MERN API Backend is live and running!',
+    health: '/api/health',
+    documentation: 'https://github.com/munawwar-pathan-official/mern-task',
+  });
+});
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/cases', require('./routes/caseRoutes'));

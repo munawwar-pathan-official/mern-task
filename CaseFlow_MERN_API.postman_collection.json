@@ -1,0 +1,451 @@
+{
+  "info": {
+    "_postman_id": "c8a12e34-5678-90ab-cdef-1234567890ab",
+    "name": "CaseFlow MERN API Collection",
+    "description": "Complete Postman Collection for testing CaseFlow MERN application APIs (Authentication, Case Management, Status State Machine, Document Attachments, Comments, and Audit Logs).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://mern-task-lds4.onrender.com",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "caseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "agentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Manager Login (Sarah Jenkins)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "    console.log('Saved Manager JWT Token:', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"manager@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates as Manager and auto-saves JWT token to collection variable {{token}}"
+          }
+        },
+        {
+          "name": "Agent 1 Login (Alex Vance)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "    console.log('Saved Agent JWT Token:', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"agent1@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Authenticates as Agent 1 and auto-saves JWT token to collection variable {{token}}"
+          }
+        },
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"David Miller\",\n  \"email\": \"david.agent@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"Agent\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User Profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Get Registered Agents List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.length > 0) {",
+                  "    pm.collectionVariables.set('agentId', jsonData[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/agents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "agents"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cases",
+      "item": [
+        {
+          "name": "List Cases (Filter & Pagination)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.cases && jsonData.cases.length > 0) {",
+                  "    pm.collectionVariables.set('caseId', jsonData.cases[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cases?page=1&limit=10&search=&status=All",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "status",
+                  "value": "All"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create New Case (Manager)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientName\": \"AeroTech Industries\",\n  \"subjectName\": \"Jameson Holt\",\n  \"caseType\": \"Corporate Fraud Audit\",\n  \"dueDate\": \"2026-08-25T00:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cases",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases"]
+            }
+          }
+        },
+        {
+          "name": "Get Single Case Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}"]
+            }
+          }
+        },
+        {
+          "name": "Assign Case to Agent (Manager)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agentId\": \"{{agentId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}/assign",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}", "assign"]
+            }
+          }
+        },
+        {
+          "name": "Update Case Status (State Machine Enforced)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newStatus\": \"In Progress\",\n  \"note\": \"Field verification initiated by agent\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Get Case Audit Trail Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}/audit-logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}", "audit-logs"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents & Comments",
+      "item": [
+        {
+          "name": "Upload Document Attachment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}", "documents"]
+            }
+          }
+        },
+        {
+          "name": "Get Case Documents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}", "documents"]
+            }
+          }
+        },
+        {
+          "name": "Add Case Note / Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Verified site location and land registry record matches subject credentials.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}", "comments"]
+            }
+          }
+        },
+        {
+          "name": "Get Case Notes / Comments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cases/{{caseId}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cases", "{{caseId}}", "comments"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "System Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

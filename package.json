@@ -8,6 +8,8 @@
     "seed": "npm run seed --prefix server",
     "server": "npm run start --prefix server",
     "client": "npm run dev --prefix client",
+    "build": "vite",
+    "preview": "vite preview",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
   },
   "devDependencies": {

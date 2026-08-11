@@ -3,8 +3,8 @@ import axios from 'axios';
 // Get base backend URL with fallback to live Render backend
 const getApiBaseUrl = () => {
   let rawUrl = import.meta.env.VITE_API_URL;
-  
-  // In browser production mode on Vercel, if VITE_API_URL is missing or local, fallback to live Render backend
+
+  // In browser production mode on Vercel, fallback to live Render backend if unset
   if (!rawUrl || rawUrl === '/' || rawUrl === '/api') {
     if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
       rawUrl = 'https://mern-task-lds4.onrender.com';

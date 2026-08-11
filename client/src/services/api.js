@@ -1,12 +1,24 @@
 import axios from 'axios';
 
-// Use environment variable VITE_API_URL in production (e.g., Render backend URL)
-const API_BASE_URL = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : '/api';
+// Get base backend URL with fallback to live Render backend
+const getApiBaseUrl = () => {
+  let rawUrl = import.meta.env.VITE_API_URL;
+  
+  // In browser production mode on Vercel, if VITE_API_URL is missing or local, fallback to live Render backend
+  if (!rawUrl || rawUrl === '/' || rawUrl === '/api') {
+    if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+      rawUrl = 'https://mern-task-lds4.onrender.com';
+    } else {
+      return '/api';
+    }
+  }
+
+  const cleanUrl = rawUrl.replace(/\/+$/, '');
+  return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`;
+};
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

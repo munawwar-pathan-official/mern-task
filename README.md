@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # CaseFlow - MERN Case Workflow Management System
 
 CaseFlow is a full-stack MERN (MongoDB, Express, React, Node.js) application designed for managing multi-role verification cases with strict server-enforced state transitions, comprehensive audit logging, file attachments, and search/filtering/pagination capabilities.
@@ -168,4 +167,3 @@ The status flow is strictly validated on the Express server:
 - Execute database re-seeding anytime: `npm run seed` inside `server/` or root directory.
 =======
 # mern-task
->>>>>>> 8792cc3e856a4dc242a196dc202347e544647123

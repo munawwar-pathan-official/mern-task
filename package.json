@@ -8,11 +8,13 @@
     "seed": "npm run seed --prefix server",
     "server": "npm run start --prefix server",
     "client": "npm run dev --prefix client",
-    "build": "vite",
     "preview": "vite preview",
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\""
+    "dev": "vite",
+    "build": "vite build",
+    "vercel-build": "npm run build"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "vite": "^8.2.1"
   }
 }
